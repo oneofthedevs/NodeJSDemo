@@ -1,0 +1,15 @@
+{
+  "name": "node",
+  "version": "1.0.0",
+  "description": "Node Traversy Media Crash Course",
+  "main": "index.js",
+  "scripts": {
+    "index": "nodemon index.js",
+    "runindex": "node index.js"
+  },
+  "author": "Dev Chhaniyara",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
