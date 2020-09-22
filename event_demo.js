@@ -1,4 +1,3 @@
-const { SlowBuffer } = require("buffer");
 const Emitter = require("events");
 
 // Create Class
