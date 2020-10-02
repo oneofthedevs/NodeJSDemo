@@ -1,0 +1,9 @@
+{
+  "nyc": {
+    "_comment": "Purpose: Code coverage withing mocha/chai using Istanbul",
+    "register": "babel-register",
+    "include": ["**/*.js", "./*.js"],
+    "exclude": ["**/node_modules/**", "**/test/**", "**/coverage/**"],
+    "all": true
+  }
+}

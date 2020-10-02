@@ -75,7 +75,7 @@ router.put("/:id", async (req, res) => {
       { $set: { title: req.body.title } }
     );
     if (response.nModified === 0) {
-      res.status(404).json({ ...response, message: "No Records found" });
+      res.status(500).json({ ...response, message: "No Records found" });
     } else {
       res
         .status(200)
