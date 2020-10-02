@@ -16,11 +16,16 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const post = await postModel.post.findById(req.params.id);
-    res.status(200).json(post);
+    if (post === null) {
+      res.status(404).json({ message: "Not Found" });
+    } else {
+      res.status(200).json(post);
+    }
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).json(err);
   }
 });
+
 // Insert Post
 router.post("/", async (req, res) => {
   const post = new postModel.post({
@@ -29,10 +34,9 @@ router.post("/", async (req, res) => {
   try {
     const savePost = await post.save();
     res.status(200).json(savePost);
-  } catch (e) {
-    res.status(500).json(e);
+  } catch (err) {
+    res.status(500).json(err);
   }
-
   // post
   //   .save()
   //   .then((data) => {
@@ -44,6 +48,42 @@ router.post("/", async (req, res) => {
   //       error: err,
   //     });
   //   });
+});
+
+// Delete
+router.delete("/:id", async (req, res) => {
+  try {
+    const response = await postModel.post.deleteOne({ _id: req.params.id });
+    console.log(response);
+    if (response.deletedCount === 0) {
+      res.status(404).json({ ...response, message: "No Records found" });
+    } else {
+      res
+        .status(200)
+        .json({ ...response, message: "Record Deleted Successfully" });
+    }
+  } catch (err) {
+    res.status(404).json(err);
+  }
+});
+
+// Put
+router.put("/:id", async (req, res) => {
+  try {
+    const response = await postModel.post.updateOne(
+      { _id: req.params.id },
+      { $set: { title: req.body.title } }
+    );
+    if (response.nModified === 0) {
+      res.status(404).json({ ...response, message: "No Records found" });
+    } else {
+      res
+        .status(200)
+        .json({ ...response, message: "Record updated Successfully" });
+    }
+  } catch (err) {
+    res.status(404).json(err);
+  }
 });
 
 module.exports = router;
