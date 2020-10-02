@@ -8,9 +8,9 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 require("dotenv/config");
 
-app.use(bodyParser.json());
 // Middleware function
 const logger = (req, res, next) => {
   console.log("logged");
@@ -18,6 +18,8 @@ const logger = (req, res, next) => {
 };
 
 // Middleware use
+app.use(cors());
+app.use(bodyParser.json());
 app.use(logger);
 
 // Connect to DB
