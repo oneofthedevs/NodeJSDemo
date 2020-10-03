@@ -9,6 +9,8 @@ const app = express();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const blogRoutes = require("./routes/blog");
+
 require("dotenv/config");
 
 // Middleware function
@@ -31,10 +33,9 @@ mongoose.connect(
   }
 );
 // import routes
-const postRoutes = require("./routes/post");
 
 // Routes middleware
-app.use("/post", postRoutes);
+app.use("/blog", blogRoutes);
 
 // Routes
 app.get("/", (req, res) => {
