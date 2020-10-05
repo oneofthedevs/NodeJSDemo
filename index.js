@@ -22,7 +22,7 @@ const logger = (req, res, next) => {
 // Middleware use
 app.use(cors());
 app.use(bodyParser.json());
-app.use(logger);
+// app.use(logger);
 
 // Connect to DB
 mongoose.connect(
