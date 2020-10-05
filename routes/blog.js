@@ -33,9 +33,9 @@ router.post("/", async (req, res) => {
   });
   try {
     const savePost = await post.save();
-    res.status(200).json(savePost);
+    res.status(201).json(savePost);
   } catch (err) {
-    res.status(500).json(err);
+    res.status(400).json(err);
   }
   // post
   //   .save()
@@ -72,16 +72,26 @@ router.put("/:id", async (req, res) => {
   try {
     const response = await postModel.post.updateOne(
       { _id: req.params.id },
-      { $set: { title: req.body.title } }
+      {
+        $set: {
+          title: req.body.title,
+          priority: req.body.priority,
+          completed: req.body.completed,
+        },
+      }
     );
+    console.log(response);
     if (response.nModified === 0) {
-      res.status(500).json({ ...response, message: "No Records found" });
+      res
+        .status(400)
+        .json({ ...response.message, message: "No Records found" });
     } else {
       res
-        .status(200)
+        .status(201)
         .json({ ...response, message: "Record updated Successfully" });
     }
   } catch (err) {
+    console.log(err);
     res.status(404).json(err);
   }
 });

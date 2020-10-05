@@ -5,15 +5,11 @@ const postSchemma = mongoose.Schema({
     type: String,
     required: true,
   },
-  desc: {
-    type: String,
-    required: false,
-  },
   priority: {
     type: Number,
     required: true,
   },
-  isCompleted: {
+  completed: {
     type: Boolean,
     required: true,
     default: false,
