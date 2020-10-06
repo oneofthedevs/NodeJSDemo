@@ -10,6 +10,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const blogRoutes = require("./routes/blog");
+const userRoutes = require("./routes/user");
 
 require("dotenv/config");
 
@@ -22,21 +23,25 @@ const logger = (req, res, next) => {
 // Middleware use
 app.use(cors());
 app.use(bodyParser.json());
-// app.use(logger);
+app.use(logger);
 
 // Connect to DB
 mongoose.connect(
   process.env.DB_CONNECTION,
   { useNewUrlParser: true, useUnifiedTopology: true },
-  () => {
-    console.log("connected");
+  (err) => {
+    try {
+      console.log("connected");
+    } catch (e) {
+      console.log(err + e);
+    }
   }
 );
 // import routes
 
 // Routes middleware
 app.use("/blog", blogRoutes);
-
+app.use("/user", userRoutes);
 // Routes
 app.get("/", (req, res) => {
   res.send("Hello there");

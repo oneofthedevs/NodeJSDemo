@@ -21,14 +21,6 @@ const userSchemma = mongoose.Schema({
     type: String,
     required: true,
   },
-  firstName: {
-    type: String,
-    required: true,
-  },
-  lastName: {
-    type: String,
-    required: true,
-  },
   email: {
     type: String,
     required: true,
@@ -41,6 +33,10 @@ const userSchemma = mongoose.Schema({
     type: Boolean,
     required: true,
     default: false,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
   },
 });
 const user = mongoose.model("User", userSchemma);
