@@ -3,6 +3,7 @@ const router = express.Router();
 const { check } = require("express-validator");
 const userMethods = require("../methods/user-methods");
 
+//* Authentication
 // POST: Register
 router.post(
   "/register",
@@ -24,6 +25,10 @@ router.post(
   ],
   userMethods.login
 );
+
+//* CRUD operations
+// Get Blogs
+router.get("/allBlogs", userMethods.getBlogs);
 
 // Export Router
 module.exports = router;

@@ -1,4 +1,4 @@
-const postModel = require("../models/Post");
+const postModel = require("../models/models");
 
 // Get Single
 exports.getSingle = async (req, res, next) => {
@@ -82,12 +82,3 @@ exports.RemoveItem = async (req, res, next) => {
     res.status(404).json(err);
   }
 };
-
-// // Exports
-// module.exports = {
-//   getSingle,
-//   getAll,
-//   InsertData,
-//   UpdateData,
-//   RemoveItem,
-// };
