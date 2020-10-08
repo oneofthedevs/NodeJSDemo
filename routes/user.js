@@ -28,7 +28,14 @@ router.post(
 
 //* CRUD operations
 // Get Blogs
-router.get("/allBlogs", userMethods.getBlogs);
+router.get(
+  "/allBlogs",
+  [check("id", "Id is required").notEmpty()],
+  userMethods.getBlogs
+);
+
+// Get All users
+router.get("/getAll", userMethods.getUsers);
 
 // Export Router
 module.exports = router;

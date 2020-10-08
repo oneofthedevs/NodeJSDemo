@@ -1,16 +1,19 @@
 const postModel = require("../models/models");
+const { v4: uuidv4 } = require("uuid");
 
 // Get Single
 exports.getSingle = async (req, res, next) => {
   try {
-    const post = await postModel.post.findById(req.params.id);
+    const post = await postModel.post
+      .find({ _id: req.params.id })
+      .populate("userId", "username _id", "");
     if (post === null) {
       res.status(404).json({ message: "Not Found" });
     } else {
       res.status(200).json(post);
     }
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ message: err });
   }
 };
 
@@ -24,12 +27,34 @@ exports.getAll = async (req, res, next) => {
   }
 };
 
+// Get By userId
+exports.getbyId = async (req, res, next) => {
+  try {
+    if (!req.params.id) {
+      return res.status(204).json({ message: "Id not valid" });
+    }
+    const result = await postModel.post
+      .find({ userId: req.params.id })
+      .select("-userId");
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+};
+
 // Post
 exports.InsertData = async (req, res, next) => {
-  const post = new postModel.post({
-    ...req.body,
-  });
   try {
+    // const userId = req.body.userId;
+    const post = new postModel.post(req.body);
+    // blogId: uuidv4(),
+    // const user = await postModel.user.findOne({ userId: userId });
+    const user = await postModel.user.findById(req.body.userId);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: "user id is incorrect, user not found" });
+    }
     const savePost = await post.save();
     res.status(201).json(savePost);
   } catch (err) {
@@ -41,12 +66,13 @@ exports.InsertData = async (req, res, next) => {
 exports.UpdateData = async (req, res, next) => {
   try {
     const response = await postModel.post.updateOne(
-      { _id: req.params.id },
+      { blogId: req.body.id },
       {
         $set: {
           title: req.body.title,
-          priority: req.body.priority,
-          completed: req.body.completed,
+          smallDesc: req.body.smallDesc,
+          Description: req.body.Description,
+          userId: req.body.userId,
         },
       }
     );
@@ -69,7 +95,7 @@ exports.UpdateData = async (req, res, next) => {
 // Delete
 exports.RemoveItem = async (req, res, next) => {
   try {
-    const response = await postModel.post.deleteOne({ _id: req.params.id });
+    const response = await postModel.post.deleteOne({ blogId: req.params.id });
     console.log(response);
     if (response.deletedCount === 0) {
       res.status(404).json({ ...response, message: "No Records found" });

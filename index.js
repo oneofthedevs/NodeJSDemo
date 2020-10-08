@@ -1,9 +1,4 @@
-// const Person = require("./person");
-// const p1 = new Person("Yoda", 900);
-// const Logger = require("./logger");
-
 // !apkvfhbkchcqbhmwso@avxrja.com
-
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -37,26 +32,22 @@ mongoose.connect(
     }
   }
 );
-// import routes
+
+// Post Middleware
+app.post("/blog", (req, res) => {
+  res.send("Post here lamo");
+});
 
 // Routes middleware
 app.use("/blog", blogRoutes);
 app.use("/user", userRoutes);
+
 // Routes
-app.get("/", (req, res) => {
-  res.send("Hello there");
+app.use("/*", (req, res) => {
+  res.status(404).json({ message: "Incorrect URL" });
 });
 
-app.post("/post", (req, res) => {
-  res.send("Post here lamo");
-});
 // * Listen
 app.listen(3000, () => {
   console.log("Port: " + 3000);
 });
-
-// const log = new Logger();
-
-// Logger.on("message", (data) => console.log(`called listener:`, data));
-
-// Logger.log("hello there");

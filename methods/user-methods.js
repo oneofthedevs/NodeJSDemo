@@ -23,11 +23,10 @@ exports.register = async (req, res, next) => {
       console.log(user);
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
-      // user.Id = uuidv4();
-      await user.save();
-      console.log(user.id);
+      // user.userId = uuidv4();
+      user = await user.save();
       const payload = {
-        user: user.id,
+        user: user._id,
       };
 
       jwt.sign(payload, "randomString", { expiresIn: 3600 }, (err, token) => {
@@ -73,6 +72,16 @@ exports.login = async (req, res, next) => {
   }
 };
 
+// Get All users
+exports.getUsers = async (req, res, next) => {
+  try {
+    const users = await postModel.user.find().select("-password");
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500), json({ message: err });
+  }
+};
+
 // Get All blogs
 exports.getBlogs = async (req, res, next) => {
   // const errors = validationResult(req);
@@ -83,7 +92,7 @@ exports.getBlogs = async (req, res, next) => {
       return res.status(400).json({ result: "Hmmmm" });
     }
     console.log(id);
-    let result = await postModel.user.findById(id);
+    let result = await postModel.user.find({ _id: id });
     console.log(result);
     if (!result) {
       res.status(404).json({ message: "OOps! No data exist" });
