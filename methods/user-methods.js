@@ -2,7 +2,7 @@ const postModel = require("../models/models");
 const { validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { v4: uuidv4 } = require("uuid");
+// const { v4: uuidv4 } = require("uuid");
 
 // Register
 exports.register = async (req, res, next) => {
@@ -65,6 +65,7 @@ exports.login = async (req, res, next) => {
     };
     jwt.sign(payLoad, "secret", { expiresIn: 3600 }, (err, token) => {
       if (err) throw err;
+      res.setHeader("Set-Cookie", "loggedIn = true");
       res.status(200).json({ token: token });
     });
   } catch (err) {

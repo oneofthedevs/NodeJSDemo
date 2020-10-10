@@ -1,5 +1,4 @@
 const postModel = require("../models/models");
-const { v4: uuidv4 } = require("uuid");
 
 // Get Single
 exports.getSingle = async (req, res, next) => {
@@ -10,7 +9,7 @@ exports.getSingle = async (req, res, next) => {
     if (post === null) {
       res.status(404).json({ message: "Not Found" });
     } else {
-      res.status(200).json(post);
+      res.status(200).json(...post);
     }
   } catch (err) {
     res.status(500).json({ message: err });
@@ -20,8 +19,10 @@ exports.getSingle = async (req, res, next) => {
 // Get All
 exports.getAll = async (req, res, next) => {
   try {
-    const posts = await postModel.post.find();
-    res.json(posts);
+    const posts = await postModel.post
+      .find()
+      .populate("userId", "username _id");
+    res.status(200).json(posts);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -66,13 +67,12 @@ exports.InsertData = async (req, res, next) => {
 exports.UpdateData = async (req, res, next) => {
   try {
     const response = await postModel.post.updateOne(
-      { blogId: req.body.id },
+      { _id: req.body._id },
       {
         $set: {
           title: req.body.title,
           smallDesc: req.body.smallDesc,
           Description: req.body.Description,
-          userId: req.body.userId,
         },
       }
     );

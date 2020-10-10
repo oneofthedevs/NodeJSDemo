@@ -50,6 +50,7 @@ const postSchemma = mongoose.Schema({
     ref: "User",
     required: true,
   },
+  tags: [],
 });
 
 const user = mongoose.model("User", userSchemma);
