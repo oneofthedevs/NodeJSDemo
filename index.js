@@ -7,6 +7,8 @@ const cors = require("cors");
 const blogRoutes = require("./routes/blog");
 const userRoutes = require("./routes/user");
 
+// const express_session = require("express-session");
+
 require("dotenv/config");
 
 // Middleware function
@@ -18,6 +20,7 @@ const logger = (req, res, next) => {
 // Middleware use
 app.use(cors());
 app.use(bodyParser.json());
+
 app.use(logger);
 
 // Connect to DB

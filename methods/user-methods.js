@@ -65,7 +65,10 @@ exports.login = async (req, res, next) => {
     };
     jwt.sign(payLoad, "secret", { expiresIn: 3600 }, (err, token) => {
       if (err) throw err;
-      res.setHeader("Set-Cookie", "loggedIn = true");
+      res.setHeader("Set-Cookie", `token = ${token}; Max-Age=30; HttpOnly`);
+      // req.session.isLoggedIn = true;
+      // res.redirect();
+      res.setHeader("Set-Cookie", `token=${token}; HttpOnly; Max-Age=3600`);
       res.status(200).json({ token: token });
     });
   } catch (err) {
