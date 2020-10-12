@@ -41,6 +41,28 @@ exports.register = async (req, res, next) => {
   }
 };
 
+// verify
+exports.verify = async (req, res, next) => {
+  try {
+    jwt.verify(
+      req.body.token,
+      "secret",
+      {
+        issuer: "DC",
+        notBefore: Date.now(),
+        algorithm: "HS256",
+        subject: "Token",
+      },
+      (err, verified) => {
+        if (err) res.status(400).json({ message: "not verified" });
+        else res.status(200).json({ message: verified });
+      }
+    );
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+};
+
 // Login
 exports.login = async (req, res, next) => {
   const errors = validationResult(req);
@@ -63,14 +85,25 @@ exports.login = async (req, res, next) => {
         id: user.id,
       },
     };
-    jwt.sign(payLoad, "secret", { expiresIn: 3600 }, (err, token) => {
-      if (err) throw err;
-      res.setHeader("Set-Cookie", `token = ${token}; Max-Age=30; HttpOnly`);
-      // req.session.isLoggedIn = true;
-      // res.redirect();
-      res.setHeader("Set-Cookie", `token=${token}; HttpOnly; Max-Age=3600`);
-      res.status(200).json({ token: token });
-    });
+    jwt.sign(
+      payLoad,
+      "secret",
+      {
+        expiresIn: 3600,
+        issuer: "DC",
+        notBefore: Date.now(),
+        algorithm: "HS256",
+        subject: "Token",
+      },
+      (err, token) => {
+        if (err) throw err;
+        res.setHeader("Set-Cookie", `token = ${token}; Max-Age=30; HttpOnly`);
+        // req.session.isLoggedIn = true;
+        // res.redirect();
+        res.setHeader("Set-Cookie", `token=${token}; HttpOnly; Max-Age=3600`);
+        res.status(200).json({ token: token });
+      }
+    );
   } catch (err) {
     res.status(500).json({ error: err });
   }

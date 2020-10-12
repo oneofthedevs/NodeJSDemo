@@ -27,6 +27,9 @@ router.post(
   userMethods.login
 );
 
+// POST: verify
+router.post("/verify", userMethods.verify);
+
 //* CRUD operations
 // Get Blogs
 router.get(
