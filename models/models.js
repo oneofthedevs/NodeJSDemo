@@ -29,10 +29,6 @@ const userSchemma = mongoose.Schema({
 });
 
 const postSchemma = mongoose.Schema({
-  // blogId: {
-  //   type: String,
-  //   required: true,
-  // },
   title: {
     type: String,
     required: true,

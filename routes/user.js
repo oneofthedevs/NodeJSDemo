@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
-const userMethods = require("../methods/user-methods");
+const userMethods = require("../controllers/user-controller");
 const passport = require("passport");
 
 //* Authentication

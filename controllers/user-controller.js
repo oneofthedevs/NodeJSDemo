@@ -15,7 +15,8 @@ exports.register = async (req, res, next) => {
     if (username && email && password) {
       let user = await postModel.user.findOne({ email, username });
       if (user) {
-        res.status(400).json({
+        return res.status(400).json({
+          status: 404,
           message: "User already exists",
         });
       }
@@ -31,13 +32,13 @@ exports.register = async (req, res, next) => {
 
       jwt.sign(payload, "randomString", { expiresIn: 3600 }, (err, token) => {
         if (err) throw err;
-        res.status(200).json({ token: token });
+        res.status(200).json({ status: 201, token: token });
       });
     } else {
-      res.status(204).json({ message: "required fields" });
+      res.status(204).json({ status: 204, message: "required fields" });
     }
   } catch (err) {
-    res.status(500).json(`${err}`);
+    res.status(500).json({ status: 500, resposne: `${err}` });
   }
 };
 
@@ -54,12 +55,12 @@ exports.verify = async (req, res, next) => {
         subject: "Token",
       },
       (err, verified) => {
-        if (err) res.status(400).json({ message: "not verified" });
-        else res.status(200).json({ message: verified });
+        if (err) res.status(400).json({ status: 400, message: "not verified" });
+        else res.status(200).json({ status: 200, message: verified });
       }
     );
   } catch (err) {
-    res.status(500).json({ message: err });
+    res.status(500).json({ status: 500, message: err });
   }
 };
 
@@ -67,18 +68,22 @@ exports.verify = async (req, res, next) => {
 exports.login = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ error: errors.array() });
+    return res.status(400).json({
+      status: 200,
+      response: errors.array(),
+      message: "Unauthoraised",
+    });
   }
   const { username, password } = req.body;
   try {
     let user = await postModel.user.findOne({ username });
     if (!user) {
-      res.status(404).json({ message: "user not fond" });
+      res.status(404).json({ status: 404, message: "user not fond" });
     }
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      res.status(400).json({ message: "Incorrect Password" });
+      res.status(400).json({ status: 400, message: "Incorrect Password" });
     }
     const payLoad = {
       user: {
@@ -101,11 +106,11 @@ exports.login = async (req, res, next) => {
         // req.session.isLoggedIn = true;
         // res.redirect();
         res.setHeader("Set-Cookie", `token=${token}; HttpOnly; Max-Age=3600`);
-        res.status(200).json({ token: token });
+        res.status(200).json({ status: 200, response: { token: token } });
       }
     );
   } catch (err) {
-    res.status(500).json({ error: err });
+    res.status(500).json({ status: 500, error: err });
   }
 };
 
@@ -113,9 +118,9 @@ exports.login = async (req, res, next) => {
 exports.getUsers = async (req, res, next) => {
   try {
     const users = await postModel.user.find().select("-password");
-    res.status(200).json(users);
+    res.status(200).json({ status: 200, response: users });
   } catch (err) {
-    res.status(500), json({ message: err });
+    res.status(500), json({ status: 500, message: err });
   }
 };
 
@@ -126,16 +131,16 @@ exports.getBlogs = async (req, res, next) => {
   // console.log(req.body, id);
   try {
     if (!id) {
-      return res.status(400).json({ result: "Hmmmm" });
+      return res.status(400).json({ status: 400, response: "Hmmmm" });
     }
     console.log(id);
     let result = await postModel.user.find({ _id: id });
     console.log(result);
     if (!result) {
-      res.status(404).json({ message: "OOps! No data exist" });
+      res.status(404).json({ status: 404, message: "OOps! No data exist" });
     }
-    res.status(200).json({ result: result.blogs });
+    res.status(200).json({ status: 200, response: result.blogs });
   } catch (err) {
-    res.status(500).json({ error: err });
+    res.status(500).json({ status: 500, response: err });
   }
 };

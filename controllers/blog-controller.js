@@ -1,4 +1,5 @@
 const postModel = require("../models/models");
+var ObjectID = require("mongodb").ObjectID;
 
 // Get Single
 exports.getSingle = async (req, res, next) => {
@@ -7,12 +8,12 @@ exports.getSingle = async (req, res, next) => {
       .find({ _id: req.params.id })
       .populate("userId", "username _id", "");
     if (post === null) {
-      res.status(404).json({ message: "Not Found" });
+      res.status(404).json({ status: 404, message: "Not Found" });
     } else {
-      res.status(200).json(...post);
+      res.status(200).json({ status: 200, response: post });
     }
   } catch (err) {
-    res.status(500).json({ message: err });
+    res.status(500).json({ status: 500, message: err });
   }
 };
 
@@ -22,9 +23,9 @@ exports.getAll = async (req, res, next) => {
     const posts = await postModel.post
       .find()
       .populate("userId", "username _id");
-    res.status(200).json(posts);
+    res.status(200).json({ status: 200, response: posts });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ status: 500, response: err });
   }
 };
 
@@ -32,14 +33,14 @@ exports.getAll = async (req, res, next) => {
 exports.getbyId = async (req, res, next) => {
   try {
     if (!req.params.id) {
-      return res.status(204).json({ message: "Id not valid" });
+      return res.status(204).json({ status: 204, message: "Id not valid" });
     }
     const result = await postModel.post
       .find({ userId: req.params.id })
       .select("-userId");
-    res.status(200).json(result);
+    res.status(200).json({ status: 200, response: result });
   } catch (err) {
-    res.status(500).json({ message: err });
+    res.status(500).json({ status: 500, message: err });
   }
 };
 
@@ -57,9 +58,9 @@ exports.InsertData = async (req, res, next) => {
         .json({ message: "user id is incorrect, user not found" });
     }
     const savePost = await post.save();
-    res.status(201).json(savePost);
+    res.status(201).json({ status: 201, response: savePost });
   } catch (err) {
-    res.status(400).json(err);
+    res.status(400).json({ status: 400, response: err });
   }
 };
 
@@ -67,44 +68,56 @@ exports.InsertData = async (req, res, next) => {
 exports.UpdateData = async (req, res, next) => {
   try {
     const response = await postModel.post.updateOne(
-      { _id: req.body._id },
+      { _id: ObjectID(req.params.id) },
       {
         $set: {
           title: req.body.title,
           smallDesc: req.body.smallDesc,
-          Description: req.body.Description,
+          description: req.body.description,
+          tags: req.body.tags,
         },
       }
     );
-    console.log(response);
+    console.log(ObjectID(req.params.id));
+    // console.log(response);
     if (response.nModified === 0) {
-      res
-        .status(400)
-        .json({ ...response.message, message: "No Records found" });
+      res.status(400).json({
+        status: 400,
+        response: response.message,
+        message: "No Records found",
+      });
     } else {
-      res
-        .status(201)
-        .json({ ...response, message: "Record updated Successfully" });
+      res.status(201).json({
+        status: 201,
+        response: response,
+        message: "Record updated Successfully",
+      });
     }
   } catch (err) {
     console.log(err);
-    res.status(404).json(err);
+    res.status(404).json({ status: 404, reponse: err });
   }
 };
 
 // Delete
 exports.RemoveItem = async (req, res, next) => {
   try {
-    const response = await postModel.post.deleteOne({ blogId: req.params.id });
-    console.log(response);
+    const response = await postModel.post.deleteOne({
+      _id: ObjectID(req.params.id),
+    });
+    // console.log(response);
     if (response.deletedCount === 0) {
-      res.status(404).json({ ...response, message: "No Records found" });
-    } else {
       res
-        .status(200)
-        .json({ ...response, message: "Record Deleted Successfully" });
+        .status(404)
+        .json({ status: 404, response: response, message: "No Records found" });
+    } else {
+      res.status(200).json({
+        status: 200,
+        response: response,
+        message: "Record Deleted Successfully",
+      });
     }
   } catch (err) {
-    res.status(404).json(err);
+    res.status(404).json({ status: 404, response: err });
   }
 };

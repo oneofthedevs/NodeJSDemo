@@ -1,4 +1,3 @@
-// !apkvfhbkchcqbhmwso@avxrja.com
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -8,6 +7,9 @@ const blogRoutes = require("./routes/blog");
 const userRoutes = require("./routes/user");
 
 // const express_session = require("express-session");
+
+const DB_URL =
+  "mongodb+srv://oneofthedevs:$iAmTheUser@nodejsdemo.dwtui.mongodb.net/NodeJSDemo?retryWrites=true&w=majority";
 
 require("dotenv/config");
 
@@ -21,11 +23,11 @@ const logger = (req, res, next) => {
 app.use(cors());
 app.use(bodyParser.json());
 
-app.use(logger);
+// app.use(logger);
 
 // Connect to DB
 mongoose.connect(
-  process.env.DB_CONNECTION,
+  DB_URL,
   { useNewUrlParser: true, useUnifiedTopology: true },
   (err) => {
     try {
