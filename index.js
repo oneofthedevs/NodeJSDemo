@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const blogRoutes = require("./routes/blog");
 const userRoutes = require("./routes/user");
+const csrf = require("csurf");
 
 // const express_session = require("express-session");
 
@@ -23,6 +24,8 @@ const logger = (req, res, next) => {
 app.use(cors());
 app.use(bodyParser.json());
 
+const csrfProtection = csrf();
+// app.post(csrfProtection);
 // app.use(logger);
 
 // Connect to DB
