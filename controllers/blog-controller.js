@@ -1,5 +1,6 @@
 const postModel = require("../models/models");
 var ObjectID = require("mongodb").ObjectID;
+const jwt = require("jsonwebtoken");
 
 // Get Single
 exports.getSingle = async (req, res, next) => {
@@ -78,7 +79,7 @@ exports.UpdateData = async (req, res, next) => {
         },
       }
     );
-    console.log(ObjectID(req.params.id));
+    // console.log(ObjectID(req.params.id));
     // console.log(response);
     if (response.nModified === 0) {
       res.status(400).json({
@@ -119,5 +120,45 @@ exports.RemoveItem = async (req, res, next) => {
     }
   } catch (err) {
     res.status(404).json({ status: 404, response: err });
+  }
+};
+
+// verify Token
+exports.verifyToken = async (req, res, next) => {
+  try {
+    // let payLoad = {};
+    let token = req.headers.authorization;
+
+    if (!token) {
+      return res
+        .status(400)
+        .json({ status: 400, response: { message: "Unauthoraised" } });
+    }
+
+    token = req.headers.authorization.split(" ")[1];
+    console.log(token);
+    let isVerified = jwt.verify(
+      token,
+      process.env.ACCESS_TOKEN_SECRET
+      // {
+      //   issuer: "DC",
+      //   notBefore: Date.now(),
+      //   algorithm: "HS256",
+      //   subject: "Token",
+      // },
+      // (err, verified) => {
+      //   console.log("verifying");
+      //   if (err) res.status(400).json({ status: 400, message: "not verified" });
+      //   else next();
+      // }
+    );
+    if (isVerified) {
+      console.log("Verified");
+      next();
+    } else {
+      return res.status(400).json({ status: 400, message: "not verified" });
+    }
+  } catch (err) {
+    res.status(500).json({ status: 500, message: `${err}` });
   }
 };

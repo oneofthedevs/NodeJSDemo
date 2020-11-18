@@ -31,10 +31,12 @@ exports.register = async (req, res, next) => {
         user: user._id,
       };
 
-      jwt.sign(payload, "randomString", { expiresIn: 3600 }, (err, token) => {
-        if (err) throw err;
-        res.status(200).json({ status: 201, token: token });
+      let accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: process.env.ACCESS_TOKEN_LIFE,
+        algorithm: "HS256",
       });
+
+      res.status(200).json({ status: 200, response: { token: accessToken } });
     } else {
       res.status(204).json({ status: 204, message: "required fields" });
     }
@@ -91,30 +93,46 @@ exports.login = async (req, res, next) => {
         id: user.id,
       },
     };
-    jwt.sign(
-      payLoad,
-      "secret",
-      {
-        expiresIn: 3600,
-        issuer: "DC",
-        notBefore: Date.now(),
-        algorithm: "HS256",
-        subject: "Token",
-      },
-      (err, token) => {
-        if (err) throw err;
-        res.setHeader("Set-Cookie", `token = ${token}; Max-Age=30; HttpOnly`);
-        // req.session.isLoggedIn = true;
-        // res.redirect();
-        res.setHeader("Set-Cookie", `token=${token}; HttpOnly; Max-Age=3600`);
-        res.status(200).json({
-          status: 200,
-          response: { token: token },
-        });
-      }
-    );
+
+    let accessToken = jwt.sign(payLoad, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: Date.now() + process.env.ACCESS_TOKEN_LIFE,
+      algorithm: "HS256",
+    });
+
+    let refreshToken = jwt.sign(payLoad, process.env.REFRESH_TOKEN_SECRET, {
+      expiresIn: process.env.REFRESH_TOKEN_LIFE,
+      algorithm: "HS256",
+    });
+
+    // jwt.sign(
+    //   payLoad,
+    //   "secret",
+    //   {
+    //     expiresIn: 3600,
+    //     issuer: "DC",
+    //     notBefore: Date.now(),
+    //     algorithm: "HS256",
+    //     subject: "Token",
+    //   },
+    //   (err, token) => {
+    //     if (err) throw err;
+    //     res.setHeader("Set-Cookie", `token = ${token}; Max-Age=30; HttpOnly`);
+    //     // req.session.isLoggedIn = true;
+    //     // res.redirect();
+    //     res.setHeader("Set-Cookie", `token=${token}; HttpOnly; Max-Age=3600`);
+    //     res.status(200).json({
+    //       status: 200,
+    //       response: { token: token },
+    //     });
+    //   }
+    // );
+    // users[username].refreshToken = refreshToken;
+    res
+      .status(200)
+      // .setHeader("Set-Cookie", `jwt=${accessToken}; HttpOnly; Max-Age=3600`)
+      .json({ status: 200, resposne: { token: accessToken } });
   } catch (err) {
-    res.status(500).json({ status: 500, error: err });
+    res.status(500).json({ status: 500, error: `${err}` });
   }
 };
 

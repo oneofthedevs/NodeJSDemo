@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
 const userMethods = require("../controllers/user-controller");
-const passport = require("passport");
+// const passport = require("passport");
 
 //* Authentication
 // POST: Register

@@ -5,14 +5,13 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const blogRoutes = require("./routes/blog");
 const userRoutes = require("./routes/user");
+const cookieParser = require("cookie-parser");
 const csrf = require("csurf");
 
 // const express_session = require("express-session");
+require("dotenv").config();
 
-const DB_URL =
-  "mongodb+srv://oneofthedevs:$iAmTheUser@nodejsdemo.dwtui.mongodb.net/NodeJSDemo?retryWrites=true&w=majority";
-
-require("dotenv/config");
+const DB_URL = process.env.MONGO_DB;
 
 // Middleware function
 const logger = (req, res, next) => {
@@ -23,6 +22,7 @@ const logger = (req, res, next) => {
 // Middleware use
 app.use(cors());
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 const csrfProtection = csrf();
 // app.post(csrfProtection);
@@ -56,6 +56,6 @@ app.use("/*", (req, res) => {
 });
 
 // * Listen
-app.listen(3000, () => {
-  console.log("Port: " + 3000);
+app.listen(process.env.PORT, () => {
+  console.log("Port: " + process.env.PORT);
 });
