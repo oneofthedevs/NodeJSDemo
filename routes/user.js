@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
+
 const userMethods = require("../controllers/user-controller");
+const { sendMail } = require("../Logic/Mail");
 // const passport = require("passport");
 
 //* Authentication

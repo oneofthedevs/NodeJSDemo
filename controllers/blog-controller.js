@@ -59,7 +59,12 @@ exports.InsertData = async (req, res, next) => {
         .json({ message: "user id is incorrect, user not found" });
     }
     const savePost = await post.save();
-    res.status(201).json({ status: 201, response: savePost });
+    res
+      .status(201)
+      .json({
+        status: 201,
+        response: savePost.populate("userId", "username _id"),
+      });
   } catch (err) {
     res.status(400).json({ status: 400, response: err });
   }

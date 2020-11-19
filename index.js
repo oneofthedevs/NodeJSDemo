@@ -1,11 +1,14 @@
+// External
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
+
+// Internal
 const blogRoutes = require("./routes/blog");
 const userRoutes = require("./routes/user");
-const cookieParser = require("cookie-parser");
 const csrf = require("csurf");
 
 // const express_session = require("express-session");
