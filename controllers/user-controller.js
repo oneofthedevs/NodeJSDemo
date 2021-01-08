@@ -6,6 +6,7 @@ const csurf = require("csurf");
 
 const postModel = require("../models/models");
 const { sendMail } = require("../Logic/Mail");
+const { post } = require("request");
 
 // Register
 exports.register = async (req, res, next) => {
@@ -39,9 +40,16 @@ exports.register = async (req, res, next) => {
         algorithm: "HS256",
       });
 
-      await sendMail(email);
-
-      res.status(200).json({ status: 200, response: { token: accessToken } });
+      if (await sendMail(email)) {
+        return res
+          .status(200)
+          .json({ status: 200, response: { token: accessToken } });
+      } else {
+        await user.deleteOne();
+        return res
+          .status(400)
+          .json({ status: 400, response: { message: "Something went wrong" } });
+      }
     } else {
       res.status(204).json({ status: 204, message: "required fields" });
     }
